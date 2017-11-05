@@ -1,0 +1,75 @@
+com.company;
+import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.URL;
+import java.util.*;
+
+
+
+    public class Main {
+    public static class Program1 implements Runnable   {
+        Random rnd = new Random();
+
+        public void run() {
+            for (int i = 0; i < 30; i++) {
+                System.out.println("I am Program 1: " + rnd.nextInt(100));
+            }
+        }
+
+    }
+
+
+    public  static class Program2 implements Runnable    {
+    Random rnd = new Random();
+
+        public void run() {
+            for (int i = 0; i < 20; i++) {
+                System.out.println("I am Program 2: " + rnd.nextInt(40));
+            }
+        }
+    }
+
+
+
+ public static void main(String[] args) throws IOException {
+        
+        Program1 prog1 = new Program1();
+        Program2 prog2 = new Program2();
+
+        Thread thread1 = new Thread(prog1);
+        Thread thread2 = new Thread(prog2);
+        thread1.start();
+        thread2.start();
+
+        try {
+         
+            Socket socket = new Socket("10.5.34.165", 5000);
+            System.out.println("Success");
+     
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            PrintWriter write = new PrintWriter(socket.getOutputStream());
+            BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+
+            String readline;
+            readline = br.readLine(); 
+            while (!readline.equals("end")) {
+                write.println(readline);
+                write.flush();
+                System.out.println("Client:" + readline);
+                System.out.println("Server:" + in.readLine());
+                readline = br.readLine();
+            } 
+            write.close(); 
+            in.close(); 
+            socket.close(); 
+        } catch (Exception e) {
+            System.out.println("can not listen to:" + e);
+        }
+    }
+}
